@@ -1,0 +1,215 @@
+<section class="content">
+    <h1>Bienvenido</h1>
+    <div class="dashboard-items">
+        <div class="item">
+            <a (click)="openFormaVehiculo(registrarVehiculo)"></a>
+            <h2>Registrar vehículo</h2>
+            <p>Registre nuevos vehículos en la plataforma</p>
+            <img src="assets/images/item1.svg" />
+        </div>
+        <div class="item">
+            <a (click)="openFormaConsulta(consultarCirculacion)"></a>
+            <h2>Consultar Circulación</h2>
+            <p>Consulte la reestricción vehicular por placa y fecha</p>
+            <img src="assets/images/icon-warning.svg" />
+        </div>
+    </div>
+</section>
+
+<ng-template #registrarVehiculo let-modal>
+  <div class="modal-header-mfc variation">
+    <div class="cols cols2 align-middle">
+      <div class="align-left">
+        <img width="20" alt="HOY NO CIRCULA" src="./assets/images/carro.png" />
+        <h4 class="modal-minititle-mfc">Añadir vehículo</h4>
+      </div>
+      <div class="align-right">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Close click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body variation">
+    <form class="forms forms-relative" autocomplete="off" [formGroup]="formaVehiculos" (ngSubmit)="guardarVehiculo(mensajeModalError)">
+      <fieldset class="label">
+        <label class="label">Placa<b>*</b></label>
+        <input type="text" placeholder="Placa: AAA1234" formControlName="Placa" class="form-control"/>
+      </fieldset>
+      <fieldset>
+        <label class="label">Color<b>*</b></label>
+        <input type="text" placeholder="Color" formControlName="Color" class="form-control" />
+      </fieldset>
+      <fieldset>
+        <label class="label">Modelo<b>*</b></label>
+        <input type="text" placeholder="Modelo" formControlName="Modelo" class="form-control"/>
+      </fieldset>
+      <fieldset>
+        <label class="label">Chasis<b>*</b></label>
+        <input type="text" placeholder="Chasis" formControlName="Chasis" class="form-control"/>
+      </fieldset>
+      <fieldset>
+        <label class="label">Año<b>*</b></label>
+        <input type="text" placeholder="Año: 2021" formControlName="Anio" class="form-control"/>
+      </fieldset>
+      <div class="modal-footer-mfc full variation">
+        <div class="align-right">
+          <button class="btn btn-border-gray" (click)="modal.close('Cancelar click')">
+            Cancelar
+          </button>
+          <button [class.btn-solid-green]="formaVehiculos.valid" [className]="formaVehiculos.valid
+                ? 'btn btn-solid-green'
+                : 'btn btn-border-gray'"
+                  (submit)="guardarVehiculo(mensajeModalError)" >
+            Guardar Vehículo
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #consultarCirculacion let-modal>
+  <div class="modal-header-mfc variation ">
+    <div class="cols cols2 align-middle ">
+      <div class="align-left ">
+        <img width="20 " alt="HOY NO CIRCULA" src="./assets/images/icon-warning.svg">
+        <h4 class="modal-minititle-mfc ">Consultar</h4>
+      </div>
+      <div class="align-right ">
+        <button type="button " class="close " aria-label="Close " (click)="modal.dismiss( 'Close click') ">
+          <span aria-hidden="true ">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <form class="forms forms-relative" autocomplete="off" [formGroup]="formaConsulta" (ngSubmit)="consultarReestriccion(mensajeModalError, mensajeAdvertencia)">
+    <fieldset class="label">
+      <label class="label">Placa<b>*</b></label>
+      <input type="text" placeholder="Placa: AAA1234" formControlName="Placa" class="form-control" (change)="buscarVehiculo(mensajeAdvertenciaRegistro)"/>
+    </fieldset>
+    <fieldset>
+      <label class="label">Fecha<b>*</b></label>
+      <input type="date" placeholder="Fecha" formControlName="Fecha" class="form-control" min="ho"/>
+    </fieldset>
+    <div class="modal-footer-mfc full variation">
+      <div class="align-right">
+        <button class="btn btn-border-gray" (click)="modal.close('Cancelar click')">
+          Cancelar
+        </button>
+        <button [class.btn-solid-green]="formaConsulta.valid" [className]="formaConsulta.valid
+                ? 'btn btn-solid-green'
+                : 'btn btn-border-gray'"
+                (submit)="consultarReestriccion(mensajeModalError, mensajeAdvertencia)" >
+          Consultar
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<ngb-alert
+  *ngIf="successMessage"
+  type="success"
+  class="wbtn-success"
+  (close)="successMessage = null"
+><img src="./assets/images/success.svg" /><span>{{
+  successMessage
+  }}</span></ngb-alert
+>
+
+<ng-template #mensajeModalError let-modal>
+  <div class="modal-error">
+    <div>
+      <div class="cols cols2 align-middle">
+        <div class="align-left">
+          <img src="./assets/images/warning.svg" width="42" />
+          <p>{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="align-right">
+      <button
+        class="btn btn-solid-white"
+        (click)="modal.close('Cancelar click')" >
+        Aceptar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #mensajeAdvertenciaRegistro let-modal>
+  <div class="modal-header-mfc variation modal-mensaje">
+    <div class="cols cols2 align-middle">
+      <div class="align-left">
+        <img
+          width="32"
+          alt="No Circula"
+          src="./assets/images/icon-mensaje-warning.svg"
+        />
+        <h4 class="modal-minititle-mfc">Importante</h4>
+      </div>
+      <div class="align-right">
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          (click)="cerrarModales()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body variation modal-mensaje">
+    <p>{{this.advertenceMessage}}</p>
+  </div>
+  <div class="modal-footer-mfc full variation">
+    <div class="cols cols2">
+      <div class="align-right">
+        <button
+          class="btn btn-solid-green"
+          (click)="irRegistroVehiculo(registrarVehiculo)">Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #mensajeAdvertencia let-modal>
+  <div class="modal-header-mfc variation modal-mensaje">
+    <div class="cols cols2 align-middle">
+      <div class="align-left">
+        <img
+          width="32"
+          alt="No Circula"
+          src="./assets/images/icon-mensaje-warning.svg"
+        />
+        <h4 class="modal-minititle-mfc">Importante</h4>
+      </div>
+      <div class="align-right">
+        <button
+          type="button"
+          class="close"
+          aria-label="Close"
+          (click)="modal.dismiss('Close click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body variation modal-mensaje">
+    <p>{{this.advertenceMessage}}</p>
+  </div>
+  <div class="modal-footer-mfc full variation">
+    <div class="cols cols2">
+      <div class="align-right">
+        <button
+          class="btn btn-solid-green"
+          (click)="modal.dismiss('Close click')">Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
